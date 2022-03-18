@@ -1,17 +1,121 @@
+import pyautogui
 import requests
 import time
 from selenium import webdriver
-import undetected_chromedriver.v2 as uc
+from selenium.webdriver import ActionChains
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-s = Service("/Users/adam/Documents/rando/chromedriver")
-driver = webdriver.Chrome(service=s)
+
+def frames():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    url = "https://demoqa.com/frames"
+    driver.get(url)
+    #driver.switch_to.
+    driver.switch_to.frame("frame1")
+    extracted_text = driver.find_element(By.XPATH, "//h1[contains(text(), 'This is a')][1]").text
+    print(extracted_text)
+
+def nestedFrames():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    url = "https://demoqa.com/nestedframes"
+    driver.get(url)
+    driver.switch_to.frame("frame1")
+    element = driver.find_element(By.XPATH,"//iframe[@srcdoc = '<p>Child Iframe</p>']")
+    driver.switch_to.frame(element)
+    extracted_text = driver.find_element(By.XPATH, "//p[text() = 'Child Iframe']").text
+    print(extracted_text)
 
 
+def pyautoguiTAB():  #GET HEEEEEEEEEEEEELLLLLLLLLLLLLLLP!!!!!
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    url = "https://demoqa.com/automation-practice-form"
+    driver.get(url)
+    driver.find_element(By.XPATH, "//input[@id='firstName']").send_keys("Adam")
+    time.sleep(1)
+    pyautogui.press('TAB')
+    time.sleep(2)
+    pyautogui.press('TAB')
+    time.sleep(2)
+    pyautogui.press('TAB')
+
+def screenshot():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    url = "https://flipkart.com"
+    driver.get(url)
+    driver.save_screenshot("/Users/adam/Documents/rando/my_screenshot.png") #"C:\windowsDirectory\my_screenshot.png"
+
+def actionChains():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    url = "https://flipkart.com"
+    driver.get(url)
+    time.sleep(10)
+    actions = ActionChains(driver)
+    element = driver.find_element(By.XPATH, "//img[@alt='Electronics']")
+    actions.move_to_element(element)
+    """
+    actions.click(element)
+    actions.double_click(element)
+    etc
+    """
+    actions.perform()
+    time.sleep(10)
+
+def isDisplayed():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    url = "https://flipkart.com"
+    driver.get(url)
+    time.sleep(2)
+    if driver.find_element(By.XPATH, "//img[@alt='Flipkart']").is_displayed():
+        print("FlipKart is opened")
+    else:
+        print("nope")
+
+def tryCatch():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    try:
+        url = "https://flipkart.com"
+        driver.get(url)
+        time.sleep(2)
+        if driver.find_element(By.XPATH, "//img[@alt='Flipkart2']").is_displayed():
+            print("FlipKart is opened")
+        else:
+            print("nope")
+    except Exception as e:
+        print("There is an error")\
+        #print(str(e))
+
+def excel():
+    import xlrd
+
+    try:
+        wb = xlrd.open_workbook("/Users/adam/Documents/rando/my_data.xls")
+        sheet = wb.sheet_by_index(0)
+        cnt_row = sheet.nrows
+        cnt_col = sheet.ncols
+        print("Excel")
+
+        for i in range(1, cnt_row):
+            name = sheet.cell_value(i, 0)
+            email = sheet.cell_value(i, 1)
+            password = sheet.cell_value(i, 2)
+            print("name: {}, email: {}, password: {}".format(name, email, password))
+    except Exception as e:
+        print("error in reading excel")
+        print(str(e))
 
 def wait():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
     url = "https://demoqa.com/alerts"
     driver.get(url)
     driver.maximize_window()
@@ -31,6 +135,8 @@ def wait():
     driver.switch_to.alert.send_keys('test')
 
 def alerts():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
     url = "https://demoqa.com/alerts"
     driver.get(url)
     driver.find_element(By.XPATH,"//*[@id='alertButton']").click()
@@ -41,20 +147,26 @@ def alerts():
     time.sleep(5)
 
 def promptBox():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
     url = "https://demoqa.com/alerts"
     driver.get(url)
     element = driver.find_element(By.XPATH, "//*[@id='promtButton']")
     driver.execute_script("arguments[0].scrollIntoView();", element)
     element.click()
-    time.sleep(5)
+    time.sleep(1)
     alert2 = driver.switch_to.alert
-    alert2.send_keys("test")
 
+    alert2.send_keys("test")
+    #alert2.send_keys(keys.RETURN)
+    #alert2.accept()
     #alert.send_keys('test')
     #alert.c # alert.dismiss()
     time.sleep(5)
 
 def tabSwitch():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
     url = "https://www.facebook.com"
     driver.get(url)
 
@@ -69,6 +181,8 @@ def tabSwitch():
         time.sleep(2)
 
 def statusCode():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
     #This is problematic..
     url = "https://www.facebook.com"
     r = requests.get(url)
@@ -76,6 +190,8 @@ def statusCode():
 
 
 def noRightClick():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
     url = "https://www.facebook.com"
     driver.get(url)
     page_source = driver.page_source
@@ -86,35 +202,57 @@ def noRightClick():
     else:
         print("Nope")
 
-noRightClick()
-
-#Will clean this up I promise!
-"""
-driver.find_element(By.XPATH, "//*[@id='identifierId']").send_keys("pjamfan671@gmail.com")
-driver.find_element(By.XPATH, "//*[@id='identifierNext']/div/button").click()
-print(driver.current_url)
 
 
+def getURL():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    url = "https://www.facebook.com"
+    driver.get(url)
+    driver.find_element(By.XPATH, "//*[@id='email']").send_keys("adamrobertsburner@gmail.com")
+    driver.find_element(By.XPATH, "//*[@id='pass']").send_keys("Burner4u!")
+    driver.find_element(By.XPATH, "//*[@name='login']").click()
+    print(driver.current_url)
 
-page_title = driver.title
-if page_title in "Gmail: Free, Private, & Secure Email | Google Workspace":
-    print("You are here")
-else:
-    print("NOPE: " + driver.title)
 
-# driver.quit()
+def pageTitle():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    url = "https://www.facebook.com"
+    driver.get(url)
+    driver.find_element(By.XPATH, "//*[@id='email']").send_keys("adamrobertsburner@gmail.com")
+    driver.find_element(By.XPATH, "//*[@id='pass']").send_keys("Burner4u!")
+    driver.find_element(By.XPATH, "//*[@name='login']").click()
+    page_title = driver.title
+    print(page_title)
+    if "Facebook" in page_title:
+        print("You are on facebook")
+    else:
+        print("NOPE: " + driver.title)
 
-# driver.find_element_by_xpath("//*[@id='email']").send_keys("adam_roberts@gmx.com")
-driver.find_element(By.XPATH, "//*[@id='email']").send_keys("adam_roberts@gmx.com")
-driver.find_element(By.XPATH, "//*[@id='pass']").send_keys("y$tr5rX&Du&E")
-driver.find_element(By.XPATH, "//button[@name='login']").click()
+#busted/Will fix
+def findElements():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    url = "https://www.facebook.com"
+    driver.get(url)
+    mylist = driver.find_elements(By.XPATH, "//input")
+    print(len(mylist))
 
-# driver.find_element_by_partial_link_text("password").click()
+    for i in mylist:
+        print(i)
+        # driver.find_elements_by_xpath("(//input)" + i +"").send_keys("test")
+        # driver.find_element(By.XPATH, "(//input)" + i +"").send_keys("test")
 
-mylist = driver.find_elements(By.XPATH, "//input")
-print(len(mylist))
-
-# for i in range(1, len(mylist)):
-# driver.find_elements_by_xpath("(//input)" + [i] +"").send_keys("test")
-# driver.find_element(By.XPATH, "(//input)" + [i] +"").send_keys("test")
-"""
+def basicNavigation():
+    s = Service("/Users/adam/Documents/rando/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    driver.get("https://gmail.com")
+    driver.maximize_window()
+    driver.get("https://www.facebook.com")
+    driver.find_element(By.XPATH, "//*[@id='email']").send_keys("adamrobertsburner@gmail.com")
+    driver.find_element(By.XPATH, "//*[@id='pass']").send_keys("Burner4u!")
+    driver.find_element(By.XPATH, "//*[@name='login']").click()
+    driver.back()
+    driver.forward()
+    driver.quit()
