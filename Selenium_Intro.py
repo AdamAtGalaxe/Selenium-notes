@@ -1,3 +1,5 @@
+
+
 import pyautogui
 import requests
 import time
@@ -6,11 +8,96 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.wait import WebDriverWait
 
+def hybrid():
+    import openpyxl
 
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
+    driver = webdriver.Chrome(service=s)
+    path = "/Users/adamroberts/Documents/Selenium/action_sheet.xlsx"
+    wb_obj = openpyxl.load_workbook(path)
+    sheet_obj = wb_obj.active
+    nrows = sheet_obj.max_row
+    for i in range(2, nrows+1):
+        action_type = sheet_obj.cell(row=i, column=2).value
+        data = sheet_obj.cell(row=i, column=3).value
+        xpath = sheet_obj.cell(row=i, column=4).value
+
+        if action_type == "Open URL":
+            try:
+                driver.get(data)
+                sheet_obj.cell(row=i, column=5).value = "Pass"
+            except Exception as e:
+                sheet_obj.cell(row=i, column=5).value = "Fail"
+                sheet_obj.cell(row=i, column=6).value = e.args[0]
+        if action_type == "TEXT":
+            try:
+                driver.find_element(By.XPATH, xpath).send_keys(data)
+                sheet_obj.cell(row=i, column=5).value = "Pass"
+            except Exception as e:
+                sheet_obj.cell(row=i, column=5).value = "Fail"
+                sheet_obj.cell(row=i, column=6).value = e.args[0]
+                #sheet_obj.cell(row=i, column=5).font = Font(name="Tahoma", size=12, color="00339966")
+                #sheet_obj.cell(row=i, column=5).style = "Hyperlink"
+
+        if action_type == "CLICK" or action_type == "LINK":
+            try:
+                driver.find_element(By.XPATH, xpath).click()
+                sheet_obj.cell(row=i, column=5).value = "Pass"
+            except Exception as e:
+                sheet_obj.cell(row=i, column=5).value = "Fail"
+                sheet_obj.cell(row=i, column=6).value = e.args[0]
+        #done on the fly. Not tested
+        if action_type == "DROPDOWN":
+            try:
+                dropdown = Select(xpath)
+                dropdown.select_by_visible_text(data)
+            except Exception as e:
+                sheet_obj.cell(row=i, column=5).value = "Fail"
+                sheet_obj.cell(row=i, column=6).value = e.args[0]
+            #dropdown.select_by_index(0)
+        if action_type == "MouseHover":
+            try:
+                hover =ActionChains(driver).move_to_element(xpath)
+                hover.perform()
+            except Exception as e:
+                sheet_obj.cell(row=i, column=5).value = "Fail"
+                sheet_obj.cell(row=i, column=6).value = e.args[0]
+
+    wb_obj.save("/Users/adamroberts/Documents/Selenium/action_sheet.xlsx")
+    driver.quit()
+"""
+driver.execute_script("arguments[0].scrollIntoView();", element)
+
+time.sleep(15)
+w=WebDriverWait(driver, 15)
+w.until(expected_condition)
+
+alb.web_click(fb.byLocator(pobj.btn_promptbutton(), "Prompt Button"))
+
+driver.find_element(By.XPATH, "//button{@id='promptButton']").click()
+
+try:
+    w = WebDriverWait(driver, 15)
+    w.until(expected_condition.alert_is_present(fb.byLocator(pobj.btn_promptbutton())))
+alb.manage_alert()
+time.sleep(5)
+
+
+def byLocatior(element_type, elem_str):
+    if element_type == "XPATH":
+        element = driver.find_element(By.XPATH, elem_str)
+    if element_type == "Name":
+        element = driver.find_element(By.NAME, elem_str)
+    return element
+
+element = byLocator(driver.find_element(By.XPATH, elem_str)
+
+"""
 def frames():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://demoqa.com/frames"
     driver.get(url)
@@ -20,7 +107,7 @@ def frames():
     print(extracted_text)
 
 def nestedFrames():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://demoqa.com/nestedframes"
     driver.get(url)
@@ -32,7 +119,7 @@ def nestedFrames():
 
 
 def pyautoguiTAB():  #GET HEEEEEEEEEEEEELLLLLLLLLLLLLLLP!!!!!
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://demoqa.com/automation-practice-form"
     driver.get(url)
@@ -45,14 +132,14 @@ def pyautoguiTAB():  #GET HEEEEEEEEEEEEELLLLLLLLLLLLLLLP!!!!!
     pyautogui.press('TAB')
 
 def screenshot():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://flipkart.com"
     driver.get(url)
     driver.save_screenshot("/Users/adam/Documents/rando/my_screenshot.png") #"C:\windowsDirectory\my_screenshot.png"
 
 def actionChains():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://flipkart.com"
     driver.get(url)
@@ -69,7 +156,7 @@ def actionChains():
     time.sleep(10)
 
 def isDisplayed():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://flipkart.com"
     driver.get(url)
@@ -80,7 +167,7 @@ def isDisplayed():
         print("nope")
 
 def tryCatch():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     try:
         url = "https://flipkart.com"
@@ -114,7 +201,7 @@ def excel():
         print(str(e))
 
 def wait():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://demoqa.com/alerts"
     driver.get(url)
@@ -135,7 +222,7 @@ def wait():
     driver.switch_to.alert.send_keys('test')
 
 def alerts():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://demoqa.com/alerts"
     driver.get(url)
@@ -147,7 +234,7 @@ def alerts():
     time.sleep(5)
 
 def promptBox():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://demoqa.com/alerts"
     driver.get(url)
@@ -165,7 +252,7 @@ def promptBox():
     time.sleep(5)
 
 def tabSwitch():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://www.facebook.com"
     driver.get(url)
@@ -181,7 +268,7 @@ def tabSwitch():
         time.sleep(2)
 
 def statusCode():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     #This is problematic..
     url = "https://www.facebook.com"
@@ -190,7 +277,7 @@ def statusCode():
 
 
 def noRightClick():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://www.facebook.com"
     driver.get(url)
@@ -205,7 +292,7 @@ def noRightClick():
 
 
 def getURL():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://www.facebook.com"
     driver.get(url)
@@ -216,7 +303,7 @@ def getURL():
 
 
 def pageTitle():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://www.facebook.com"
     driver.get(url)
@@ -232,7 +319,7 @@ def pageTitle():
 
 #busted/Will fix
 def findElements():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     url = "https://www.facebook.com"
     driver.get(url)
@@ -245,7 +332,7 @@ def findElements():
         # driver.find_element(By.XPATH, "(//input)" + i +"").send_keys("test")
 
 def basicNavigation():
-    s = Service("/Users/adam/Documents/rando/chromedriver")
+    s = Service("/Users/adamroberts/Documents/Selenium/chromedriver")
     driver = webdriver.Chrome(service=s)
     driver.get("https://gmail.com")
     driver.maximize_window()
